@@ -53,4 +53,25 @@ class RepresentableStoreSuite extends CatsSuite {
       store.extract should ===(f(s))
     }
   }
+
+  test("pos and index are consistent") {
+    forAll { (store: Store[String, String]) =>
+      store.pos should ===(store.index)
+    }
+  }
+
+  test("seek changes pos") {
+    forAll { (store: Store[String, String], s: String) =>
+      store.seek(s).pos should ===(s)
+    }
+  }
+
+  test("seek and peek are consistent") {
+    forAll { (store: Store[String, String], s: String) =>
+      val fromSeek = store.seek(s)
+      val fromPeek = store.coflatten.peek(s)
+      fromSeek.pos should ===(fromPeek.pos)
+      fromSeek.extract should ===(fromPeek.extract)
+    }
+  }
 }
